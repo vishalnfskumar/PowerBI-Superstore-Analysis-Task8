@@ -9,10 +9,8 @@
     --bg1:#0b1220;
     --bg2:#0a0f1a;
     --brand:#7dd3fc;
-    --brand-2:#60a5fa;
     --accent:#a78bfa;
     --glow:#22d3ee;
-    --card:#0f172a;
     --text:#e5e7eb;
     --muted:#94a3b8;
     --shadow: 0 10px 30px rgba(0,0,0,.35);
@@ -45,7 +43,7 @@
   /* Headline with word-by-word glow */
   .hero-line{
     font-weight:900;
-    font-size: clamp(32px, 6vw, 54px);
+    font-size: clamp(36px, 6vw, 58px);
     margin-top:20px;
   }
   .hero-line span{
@@ -92,8 +90,8 @@
     padding: 0 16px;
   }
   .gallery{
-    display:grid; gap:20px;
-    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    display:grid; gap:24px;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
   }
   .card{
     background: rgba(15,23,42,.8);
@@ -198,6 +196,7 @@
     draw();
   })();
 
+  // Click image to float & glow
   document.querySelectorAll('.card img').forEach(img=>{
     img.addEventListener('click',()=>img.classList.toggle('active'));
   });
@@ -205,4 +204,3 @@
 
 </body>
 </html>
-
