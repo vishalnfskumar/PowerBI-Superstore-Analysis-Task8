@@ -1,93 +1,359 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task 8 – Superstore Sales Dashboard</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f6f8;
-            color: #222;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-        }
-        header {
-            background: linear-gradient(135deg, #2a5298, #1e3c72);
-            color: white;
-            padding: 20px 10px;
-        }
-        header h1 {
-            margin: 0;
-            font-size: 28px;
-        }
-        header p {
-            margin: 5px 0;
-            font-size: 16px;
-        }
-        a {
-            color: #1e3c72;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        .gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 15px;
-            padding: 20px;
-            max-width: 1200px;
-            margin: auto;
-        }
-        .gallery img {
-            width: 100%;
-            border-radius: 8px;
-            box-shadow: 0px 3px 10px rgba(0,0,0,0.2);
-            transition: transform 0.3s ease;
-            background: white;
-        }
-        .gallery img:hover {
-            transform: scale(1.05);
-        }
-        footer {
-            background: #1e3c72;
-            color: white;
-            padding: 10px 5px;
-            margin-top: 20px;
-            font-size: 14px;
-        }
-    </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Task 8 – Superstore Sales Dashboard | Vishal Kumar</title>
+<style>
+  :root{
+    --bg1:#0b1220;
+    --bg2:#0a0f1a;
+    --brand:#7dd3fc;
+    --brand-2:#60a5fa;
+    --accent:#a78bfa;
+    --glow:#22d3ee;
+    --card:#0f172a;
+    --text:#e5e7eb;
+    --muted:#94a3b8;
+    --shadow: 0 10px 30px rgba(0,0,0,.35);
+  }
+  /* Reset-ish */
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji","Segoe UI Emoji";
+    background: radial-gradient(1200px 800px at 20% -10%, #0f1a2b 0%, var(--bg2) 35%, var(--bg1) 70%),
+                linear-gradient(180deg, rgba(13,18,30,.6), rgba(10,15,26,1));
+    color: var(--text);
+    overflow-x:hidden;
+  }
+
+  /* ===== Matrix / code rain background (Canvas sits behind content) ===== */
+  #codeRain{
+    position:fixed; inset:0; z-index:-1; opacity:.35; filter:blur(.4px) contrast(120%);
+  }
+
+  /* ===== Header ===== */
+  header{
+    position:relative;
+    padding:28px 16px 16px;
+    text-align:center;
+  }
+  .badge{
+    display:inline-flex; align-items:center; gap:8px;
+    padding:8px 12px; border-radius:999px;
+    background: linear-gradient(90deg, rgba(34,211,238,.15), rgba(96,165,250,.15));
+    border:1px solid rgba(125,211,252,.25);
+    color:var(--muted); font-weight:600; letter-spacing:.2px;
+    box-shadow: var(--shadow);
+  }
+  .hero{
+    margin-top:14px;
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+  }
+  .hero-line{
+    font-weight:900; line-height:1.05; margin:0;
+    text-shadow:0 0 0 rgba(0,0,0,0);
+  }
+  .hero-line span{
+    font-size: clamp(26px, 5vw, 48px);
+    display:inline-block;
+    opacity:0; filter:blur(6px);
+    transform:translateY(8px);
+    animation: popIn .8s forwards, textGlow 2.8s ease-in-out infinite;
+  }
+  .hero-line span:nth-child(1){animation-delay:.05s}
+  .hero-line span:nth-child(2){animation-delay:.18s}
+  .hero-line span:nth-child(3){animation-delay:.31s}
+  .hero-line span:nth-child(4){animation-delay:.44s}
+  .hero-line span:nth-child(5){animation-delay:.57s}
+  .hero-line span:nth-child(6){animation-delay:.70s}
+  .hero-line span:nth-child(7){animation-delay:.83s}
+  .hero-line span:nth-child(8){animation-delay:.96s}
+  .hero-sub{
+    color:var(--muted);
+    font-size: clamp(14px, 1.8vw, 18px);
+  }
+
+  /* Waving character */
+  .mascot{
+    display:inline-flex; align-items:center; gap:10px;
+    margin-top:8px; user-select:none;
+  }
+  .hand{ display:inline-block; transform-origin: 70% 70%;
+    animation: wave 2.2s ease-in-out infinite; font-size: 28px; filter: drop-shadow(0 0 12px rgba(125,211,252,.35));
+  }
+  .dev{ font-size:18px; color:var(--brand) }
+
+  /* Links row */
+  .links{
+    margin-top:14px; display:flex; justify-content:center; gap:12px; flex-wrap:wrap;
+  }
+  .chip{
+    padding:10px 14px; border-radius:12px; background: rgba(15,23,42,.6);
+    border:1px solid rgba(148,163,184,.25); color:var(--text);
+    text-decoration:none; font-weight:600;
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+    box-shadow: var(--shadow);
+  }
+  .chip:hover{
+    transform: translateY(-2px);
+    border-color: rgba(125,211,252,.6);
+    box-shadow: 0 10px 30px rgba(34,211,238,.25);
+  }
+
+  /* ===== Gallery ===== */
+  .wrap{ max-width:1200px; margin: 20px auto 80px; padding: 0 16px; }
+  .gallery{
+    display:grid; gap:16px;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  }
+  .card{
+    background: linear-gradient(180deg, rgba(30,41,59,.8), rgba(2,6,23,.7));
+    border:1px solid rgba(148,163,184,.18);
+    border-radius:18px; padding:12px;
+    box-shadow: var(--shadow);
+    transition: transform .25s ease, border-color .25s ease, box-shadow .25s ease;
+    position:relative; overflow:hidden;
+  }
+  .card:hover{ transform: translateY(-4px); border-color: rgba(125,211,252,.45); box-shadow: 0 14px 40px rgba(2,132,199,.25)}
+  .card img{
+    width:100%; height:auto; display:block; border-radius:12px;
+    cursor:pointer; transition: transform .35s ease, filter .35s ease, box-shadow .35s ease;
+    border:2px solid transparent;
+  }
+  .card img:hover{ transform: scale(1.02) }
+  /* Click to activate: float + glow border */
+  .card img.active{
+    animation: floaty 2.4s ease-in-out infinite;
+    border-color: var(--glow);
+    box-shadow: 0 0 24px rgba(34,211,238,.45), inset 0 0 12px rgba(34,211,238,.2);
+    filter: saturate(115%);
+  }
+  .caption{
+    margin-top:10px; color:var(--muted); font-size:14px;
+    display:flex; align-items:center; justify-content:space-between; gap:8px;
+  }
+  .badge-mini{
+    padding:4px 8px; border-radius:999px; font-size:12px; color:#0b1220;
+    background: linear-gradient(90deg, var(--brand), var(--accent));
+    font-weight:800;
+  }
+
+  /* Floating hand/gesture cue */
+  .gesture{
+    position: fixed; right: 14px; bottom: 18px; z-index: 20;
+    background: radial-gradient(120px 80px at 50% 50%, rgba(34,211,238,.18), rgba(2,6,23,0));
+    border:1px dashed rgba(125,211,252,.35);
+    color:var(--text); padding:10px 14px; border-radius:14px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 12px 30px rgba(34,211,238,.25);
+    display:flex; align-items:center; gap:10px; pointer-events:none;
+    animation: pulse 2.6s infinite;
+  }
+  .gesture .finger{ font-size:22px; filter: drop-shadow(0 0 10px rgba(125,211,252,.5)); }
+
+  footer{
+    text-align:center; color:var(--muted);
+    border-top:1px solid rgba(148,163,184,.16);
+    padding:18px 10px; margin-top:36px;
+  }
+
+  /* ===== Animations ===== */
+  @keyframes wave{
+    0%{ transform: rotate(0deg) }
+    10%{ transform: rotate(14deg) }
+    20%{ transform: rotate(-8deg) }
+    30%{ transform: rotate(14deg) }
+    40%{ transform: rotate(-4deg) }
+    50%{ transform: rotate(10deg) }
+    60%,100%{ transform: rotate(0deg) }
+  }
+  @keyframes popIn{
+    to{ opacity:1; filter:blur(0); transform:translateY(0)}
+  }
+  @keyframes textGlow{
+    0%,100%{ text-shadow: 0 0 0 rgba(125,211,252,0)}
+    50%{ text-shadow: 0 0 18px rgba(125,211,252,.6) }
+  }
+  @keyframes floaty{
+    0%,100%{ transform: translateY(0) }
+    50%{ transform: translateY(-8px) }
+  }
+  @keyframes pulse{
+    0%,100%{ box-shadow: 0 0 0 rgba(34,211,238,.0) }
+    50%{ box-shadow: 0 0 24px rgba(34,211,238,.35) }
+  }
+</style>
 </head>
 <body>
 
-    <header>
-        <h1>Vishal Kumar – Data Analyst Intern</h1>
-        <p>Elevate Labs | Task 8 – Superstore Sales Dashboard</p>
-        <p>
-            📧 Email: <a href="mailto:vishalnfskumar@">vishalnfskumar@</a> | 
-            🔗 <a href="https://www.linkedin.com/in/vishal013" target="_blank">LinkedIn</a>
-        </p>
-    </header>
+<canvas id="codeRain"></canvas>
 
-    <section class="gallery">
-        <img src="dashboard.png" alt="Dashboard Main">
-        <img src="dashboard2.png" alt="Dashboard 2">
-        <img src="3_insight.png" alt="3 Insights">
-        <img src="insight.png" alt="Insights">
-        <img src="Year_wise.png" alt="Year-wise Sales">
-        <img src="month_year.png" alt="Month-Year Chart">
-        <img src="total_sales.png" alt="Total Sales">
-        <img src="total_profit.png" alt="Total Profit">
-        <img src="table.png" alt="Data Table">
-        <img src="import.png" alt="Import Screenshot">
-    </section>
+<header>
+  <div class="badge">🚀 Elevate Labs • Data Analyst Internship • Task 8</div>
 
-    <footer>
-        &copy; 2025 Vishal Kumar | Data Analyst Internship @ Elevate Labs
-    </footer>
+  <div class="hero">
+    <h1 class="hero-line" aria-label="Vishal Kumar">
+      <!-- each letter glows step-by-step -->
+      <span>V</span><span>i</span><span>s</span><span>h</span><span>a</span><span>l</span>
+      <span>&nbsp;</span>
+      <span>K</span><span>u</span><span>m</span><span>a</span><span>r</span>
+    </h1>
+    <div class="mascot">
+      <div class="hand" aria-hidden="true">👋</div>
+      <div class="dev">Superstore Sales Dashboard • Power BI</div>
+    </div>
+    <p class="hero-sub">Sales performance by <strong>Month</strong>, <strong>Region</strong>, and <strong>Category</strong></p>
 
+    <div class="links">
+      <a class="chip" href="mailto:vishalnfskumar@" title="Email Vishal">📧 vishalnfskumar@</a>
+      <a class="chip" href="https://www.linkedin.com/in/vishal013" target="_blank" rel="noopener">🔗 LinkedIn / vishal013</a>
+      <span class="chip">👨‍💻 Data Analyst Intern @ Elevate Labs</span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="gallery" id="gallery">
+    <!-- Add/Remove cards as needed; images must exist in repo root -->
+    <figure class="card">
+      <img src="dashboard.png" alt="Dashboard Main" />
+      <figcaption class="caption">
+        <span>Dashboard Main</span>
+        <span class="badge-mini">PNG</span>
+      </figcaption>
+    </figure>
+
+    <figure class="card">
+      <img src="dashboard2.png" alt="Dashboard Variant" />
+      <figcaption class="caption">
+        <span>Dashboard v2</span>
+        <span class="badge-mini">PNG</span>
+      </figcaption>
+    </figure>
+
+    <figure class="card">
+      <img src="3_insight.png" alt="Three Insights" />
+      <figcaption class="caption">
+        <span>3 Insights</span>
+        <span class="badge-mini">PNG</span>
+      </figcaption>
+    </figure>
+
+    <figure class="card">
+      <img src="insight.png" alt="Insights" />
+      <figcaption class="caption">
+        <span>Insights</span>
+        <span class="badge-mini">PNG</span>
+      </figcaption>
+    </figure>
+
+    <figure class="card">
+      <img src="Year_wise.png" alt="Year-wise Sales" />
+      <figcaption class="caption">
+        <span>Year-wise Sales</span>
+        <span class="badge-mini">PNG</span>
+      </figcaption>
+    </figure>
+
+    <figure class="card">
+      <img src="month_year.png" alt="Month-Year Chart" />
+      <figcaption class="caption">
+        <span>Month-Year</span>
+        <span class="badge-mini">PNG</span>
+      </figcaption>
+    </figure>
+
+    <figure class="card">
+      <img src="total_sales.png" alt="Total Sales KPI" />
+      <figcaption class="caption">
+        <span>Total Sales</span>
+        <span class="badge-mini">KPI</span>
+      </figcaption>
+    </figure>
+
+    <figure class="card">
+      <img src="total_profit.png" alt="Total Profit KPI" />
+      <figcaption class="caption">
+        <span>Total Profit</span>
+        <span class="badge-mini">KPI</span>
+      </figcaption>
+    </figure>
+
+    <figure class="card">
+      <img src="table.png" alt="Data Table" />
+      <figcaption class="caption">
+        <span>Data Table</span>
+        <span class="badge-mini">PNG</span>
+      </figcaption>
+    </figure>
+
+    <figure class="card">
+      <img src="import.png" alt="Import Screenshot" />
+      <figcaption class="caption">
+        <span>Import</span>
+        <span class="badge-mini">PNG</span>
+      </figcaption>
+    </figure>
+  </section>
+</main>
+
+<div class="gesture">
+  <span class="finger">👉</span>
+  <span>Tip: Click any image to make it float & glow!</span>
+</div>
+
+<footer>
+  © 2025 Vishal Kumar • Data Analyst Internship @ Elevate Labs • All Rights Reserved
+</footer>
+
+<script>
+  /* ===== Matrix / Code rain ===== */
+  (function () {
+    const c = document.getElementById('codeRain');
+    const ctx = c.getContext('2d');
+    function resize(){
+      c.width = window.innerWidth;
+      c.height = window.innerHeight;
+    }
+    resize(); window.addEventListener('resize', resize);
+
+    const glyphs = '01DATA∴ΣλψΩ<>#{}[]()/\\+=-_.:;|*% BI TABLEAU SQL DAX';
+    const fontSize = 16;
+    const cols = Math.ceil(c.width / fontSize);
+    const drops = Array.from({length: cols}, () => Math.floor(Math.random()*-20));
+
+    function draw(){
+      // translucent overlay to trail
+      ctx.fillStyle = 'rgba(10, 15, 26, 0.08)';
+      ctx.fillRect(0,0,c.width,c.height);
+
+      ctx.font = fontSize + "px monospace";
+      for (let i=0;i<drops.length;i++){
+        const txt = glyphs[Math.floor(Math.random()*glyphs.length)];
+        const x = i * fontSize;
+        const y = (drops[i] * fontSize);
+
+        ctx.fillStyle = 'rgba(125,211,252,0.9)';
+        ctx.fillText(txt, x, y);
+
+        // reset condition
+        if (y > c.height && Math.random() > 0.975){ drops[i] = 0; }
+        else { drops[i]++; }
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+  })();
+
+  /* ===== Click to float & glow ===== */
+  document.querySelectorAll('.card img').forEach(img=>{
+    img.addEventListener('click', ()=>{
+      img.classList.toggle('active');
+    });
+  });
+</script>
 </body>
 </html>
